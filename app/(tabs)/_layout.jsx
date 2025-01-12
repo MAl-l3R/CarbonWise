@@ -1,4 +1,4 @@
-import { View, Text, Image, Platform } from 'react-native'
+import { View, Text, Image, Platform, StyleSheet } from 'react-native'
 import { Tabs, Redirect } from 'expo-router'
 import { useAuth } from '../../lib/AuthContext'
 import { StatusBar } from 'expo-status-bar'
@@ -10,7 +10,7 @@ const TabIcon = ({ icon, color, focused }) => {
   const iconSize = Platform.OS === 'web' ? 24 : 20;
 
   return (
-    <View className= "items-center justify-center gap-1">
+    <View>
       <Image 
         source={icon}
         resizeMode='contain'
@@ -18,6 +18,7 @@ const TabIcon = ({ icon, color, focused }) => {
         style={{
           width: iconSize,
           height: iconSize,
+          marginTop: 30,
         }}
       />
       {focused && (
@@ -39,21 +40,21 @@ const TabsLayout = () => {
   const { currentUser, setCurrentUser, loading } = useAuth();
     // While loading the user data, return null or a loading indicator
     if (loading) {
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     }
 
-    if (!currentUser) {
-      return <Redirect href="/" />;  // Go back to onboarding screen instead of just sign in screen
-    }
+    // if (!currentUser) {
+    //   return <Redirect href="/" />;  // Go back to onboarding screen instead of just sign in screen
+    // }
 
   return (
     <>
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
-          tabBarActiveTintColor: "#0869C4",
+          tabBarActiveTintColor: "#2E8B57",
           tabBarInactiveTintColor: "#324958",
           tabBarStyle: {
             backgroundColor: '#FFFFFF',
@@ -64,6 +65,8 @@ const TabsLayout = () => {
             borderRadius: 50,
             height: 70,
             paddingVertical: Platform.OS === 'ios' ? 30 : 0,
+            marginBottom: 10,
+            marginHorizontal: 25,
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.3,
             shadowRadius: 5,
@@ -78,7 +81,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                // icon={icons.home}
+                icon={icons.home}
                 color={color}
                 focused={focused}
               />
@@ -92,7 +95,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                // icon={icons.wrench}
+                icon={icons.add}
                 color={color}
                 focused={focused}
               />
@@ -107,7 +110,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                // icon={icons.account}
+                icon={icons.settings}
                 color={color}
                 focused={focused}
               />
@@ -121,3 +124,23 @@ const TabsLayout = () => {
 }
 
 export default TabsLayout
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Native RN doesn't natively support "gap: 1", so you might add spacing
+    // around children as needed. For example:
+    // rowGap: 4 (if using a modern RN version) or margin on children.
+  },
+  focusIndicator: {
+    height: 3,
+    marginTop: 4,
+    borderRadius: 2,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

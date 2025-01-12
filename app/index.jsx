@@ -35,7 +35,7 @@ import {
   
     return (
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView contentContainerStyle={{ height: '100%' }}>
+        <View>
           <View style={styles.mainContainer}>
             <Image
               source={images.logo}
@@ -72,7 +72,7 @@ import {
               </Link>
             </View>
           </View>
-        </ScrollView>
+        </View>
   
         <StatusBar backgroundColor="#ffffff" style="dark" />
       </SafeAreaView>
@@ -96,7 +96,7 @@ import {
       width: '100%',
       // If you need an 85% "min-height", consider using a custom dimension or flex.
       // React Native doesn't support 'vh' directly, so this is a rough equivalent:
-      minHeight: '85%',
+      minHeight: '90%',
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 50, // px-4 => 16
@@ -139,7 +139,7 @@ import {
     },
     buttonContainer: {
       width: '100%',
-      height: 120,
+      height: 115,
       paddingHorizontal: 16, // px-4 => 16
     },
     signUpButton: {
