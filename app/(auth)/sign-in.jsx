@@ -128,7 +128,7 @@ const SignIn = () => {
             <ActivityIndicator 
               size="large" 
               color="#0000ff" 
-              style={{ marginTop: 20 }} 
+              style={{ marginTop: 23, marginBottom: 30 }} 
             />
           ) : (
             <CustomButton
