@@ -49,8 +49,8 @@ app.post('/calculate-carbon-footprint', async (req, res) => {
         results.push(parseFloat(match[1]));
       }
 
-      // Delay of 2 seconds between requests
-      if (i < 2) await sleep(2000);
+      // Delay of 1 second between requests
+      if (i < 2) await sleep(1000);
     }
 
     if (results.length === 0) {
@@ -59,16 +59,38 @@ app.post('/calculate-carbon-footprint', async (req, res) => {
 
     // Calculate the average
     const average = Math.round(results.reduce((sum, val) => sum + val, 0) / results.length);
-    
 
     // Respond with the average value
     res.status(200).json({ footprint: `${average} kg CO2e`, values: results });
+
   } catch (error) {
     console.error('Error calculating carbon footprint:', error);
     res.status(500).json({ error: 'Failed to calculate carbon footprint', details: error.message });
   }
 });
 
+// Reduce carbon footprint
+app.post('/reduce-carbon-footprint', async (req, res) => {
+  try {
+    if (!req.body || !req.body.product) {
+      prompt = `How to reduce my carbon footprint?`;
+    } else {
+      prompt = `How to reduce the carbon footprint from my ${req.body.product}?`;
+    }
+
+    // Call Gemini AI with the prompt
+    const result = await model.generateContent(prompt, {
+      temperature: 0.7, // Encourage creative and varied suggestions
+      max_tokens: 100,  // Allow for detailed responses
+    });
+
+    res.status(200).json({ response: result.response.text() });
+
+  } catch (error) {
+    console.log('Error getting tips for reducing carbon footprint:', error);
+    res.status(500).json({ error: 'Failed to get tips for reducing carbon footprint', details: error.message });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
