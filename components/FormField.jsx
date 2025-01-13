@@ -79,13 +79,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3f4f6',
     minHeight: 56,
     width: '100%',
-    padding: 16,
+    paddingHorizontal: 16,
     borderRadius: 16,
     borderWidth: 2,
     // base borderColor is #f3f4f6, but overridden dynamically on focus
     borderColor: '#f3f4f6',
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'flex-start',
   },
   input: {

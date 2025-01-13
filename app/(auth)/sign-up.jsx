@@ -18,6 +18,7 @@ import { auth, db } from '../../lib/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useAuth } from '../../lib/AuthContext';
 import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import CustomKeyboardView from '../../components/CustomKeyboardView';
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -109,7 +110,7 @@ const SignUp = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View>
+      <CustomKeyboardView >
         <View style={styles.mainContainer}>
           <View style={styles.logoContainer}>
             <Image 
@@ -202,7 +203,7 @@ const SignUp = () => {
             </Link>
           </View>
         </View>
-      </View>
+      </CustomKeyboardView>
     </SafeAreaView>
   );
 };
