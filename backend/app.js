@@ -73,7 +73,7 @@ app.post('/calculate-carbon-footprint', async (req, res) => {
 app.post('/reduce-carbon-footprint', async (req, res) => {
   try {
     if (!req.body || !req.body.product) {
-      prompt = `How to reduce my carbon footprint?`;
+      prompt = `How to reduce my carbon footprint? Provide practical tips in about 200 words, keeping them concise but informative.`;
     } else {
       prompt = `How to reduce the carbon footprint from my ${req.body.product}?`;
     }
