@@ -1,15 +1,13 @@
-// SelectImge.jsx (or DetectObject.jsx)
 import React, { useState } from "react";
 import { View, Text, Alert, Image, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 
 import CustomButton from "../../components/CustomButton";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function DetectObject() {
   const [imageUri, setImageUri] = useState(null);
-  const [detectedObjects, setDetectedObjects] = useState(""); // Store only object names
+  const [detectedObjects, setDetectedObjects] = useState("");
 
   // Step 1: Pick Image
   const pickImage = async () => {
@@ -44,30 +42,44 @@ export default function DetectObject() {
     }
 
     try {
+        const api_key = process.env.VISION_API_KEY;
+      const endpoint = `https://vision.googleapis.com/v1/images:annotate?key=${api_key}`;
+
       // Convert image to Base64
       const base64Image = await FileSystem.readAsStringAsync(imageUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      // Adjust URL based on your environment:
-      // For Android Emulator => "http://10.0.2.2:3000/detect-objects"
-      // For iOS Simulator   => "http://localhost:3000/detect-objects"
-      // For real device     => "http://YOUR_LOCAL_IP:3000/detect-objects"
-      const response = await fetch("http://localhost:3000/detect-objects", {
+      // Prepare request body
+      const requestData = {
+        requests: [
+          {
+            image: { content: base64Image },
+            features: [{ type: "OBJECT_LOCALIZATION", maxResults: 10 }],
+          },
+        ],
+      };
+
+      // Make API Call
+      const response = await fetch(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ base64Image }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
       });
 
-      const jsonData = await response.json();
+      const responseJson = await response.json();
+      console.log("VISION API RESPONSE:", responseJson);
 
-      if (jsonData.success) {
-        // Show only the 'objects' field
-        setDetectedObjects(jsonData.objects);
+      if (
+        responseJson.responses &&
+        responseJson.responses[0]?.localizedObjectAnnotations?.length > 0
+      ) {
+        const detectedNames = responseJson.responses[0].localizedObjectAnnotations
+          .map((obj) => obj.name)
+          .join(", ");
+        setDetectedObjects(detectedNames);
       } else {
-        Alert.alert("Error", jsonData.message || "Something went wrong.");
+        setDetectedObjects("No objects detected. Try another image.");
       }
     } catch (error) {
       console.error("Analysis Error:", error);
@@ -76,7 +88,7 @@ export default function DetectObject() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>Object Localization</Text>
 
       {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
@@ -93,13 +105,13 @@ export default function DetectObject() {
         containerStyles={{ marginBottom: 20 }}
       />
 
-      {detectedObjects !== "" && (
+      {detectedObjects && (
         <View style={styles.resultsContainer}>
-          <Text style={styles.resultTitle}>Detected Objects:</Text>
+          <Text style={styles.resultTitle}>Localized Objects:</Text>
           <Text style={styles.objectText}>{detectedObjects}</Text>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -110,7 +122,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    textAlign: "center",
   },
   image: {
     width: 250,
@@ -121,16 +132,17 @@ const styles = StyleSheet.create({
   },
   resultsContainer: {
     marginTop: 20,
-    width: "100%",
+    paddingHorizontal: 10,
     alignItems: "flex-start",
+    width: "100%",
   },
   resultTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 10,
   },
   objectText: {
     fontSize: 16,
-    color: "#333",
+    color: "#000",
   },
 });
