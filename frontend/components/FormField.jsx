@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     // base borderColor is #f3f4f6, but overridden dynamically on focus
     borderColor: '#f3f4f6',
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'flex-start',
   },
   input: {

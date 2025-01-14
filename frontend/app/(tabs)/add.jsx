@@ -16,7 +16,7 @@ const Add = () => {
       <CustomButton
         title="Enter Details Manually"
         handlePress={() => router.push("/manual-entry")}
-        containerStyles={{ marginTop: 30, height: 256, width: '90%' }}
+        containerStyles={{ marginTop: 35, height: 256, width: '90%' }}
         textStyles={{ fontWeight: 'bold', fontSize: 24 }}
       />
 
@@ -24,7 +24,7 @@ const Add = () => {
       <CustomButton
         title="Upload Product Image"
         handlePress={() => router.push("/upload-image")}
-        containerStyles={{ marginTop: 40, height: 256, width: '90%' }}
+        containerStyles={{ marginTop: 30, height: 256, width: '90%' }}
         textStyles={{ fontWeight: 'bold', fontSize: 24 }}
       />
 

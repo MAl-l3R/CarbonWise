@@ -219,7 +219,7 @@ const ManualEntry = () => {
             placeholder="(e.g., petrol, 60% metal, solar-powered)"
             handleChangeText={(e) => setForm({ ...form, additional_info: e })}
             containerStyles={{ marginTop: 20 }}
-            formFieldStyles={{height: 148, paddingTop: 4}}
+            formFieldStyles={{height: 148, paddingTop: 4, alignItems: 'stretch'}}
             multiline={true}
           />
 
