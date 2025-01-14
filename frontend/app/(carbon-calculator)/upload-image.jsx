@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { View, Text, Alert, Image, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
-
-
-
+import Ionicons from '@expo/vector-icons/Ionicons';
 import CustomButton from "../../components/CustomButton";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from 'expo-router';
 
 export default function DetectObject() {
   const [imageUri, setImageUri] = useState(null);
@@ -90,8 +90,20 @@ export default function DetectObject() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Object Localization</Text>
+    <SafeAreaView style={styles.container}>
+
+      {/* Header and Back button */}
+      <View style={styles.headerContainer}>
+        <Ionicons
+          name="arrow-back-outline"
+          size={24}
+          color="black"
+          onPress={() => {
+            router.back();
+          }}
+        />
+        <Text style={styles.headerText}>Carbon Footprint Calculator</Text>
+      </View>
 
       {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
 
@@ -113,17 +125,16 @@ export default function DetectObject() {
           <Text style={styles.objectText}>{detectedObjects}</Text>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 // --- Styles ---
 const styles = StyleSheet.create({
-  
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+  container: {
+    backgroundColor: '#ffffff',
+    flex: 1,
+    paddingHorizontal: 25, // px-4 => 16
   },
   image: {
     width: 250,
@@ -146,5 +157,17 @@ const styles = StyleSheet.create({
   objectText: {
     fontSize: 16,
     color: "#000",
+  },
+  headerContainer: {
+    flexDirection: 'row', // flex-row
+    alignItems: 'center', // items-center
+    gap: 12, // gap-3 => approximately 12px
+    paddingTop: 16, // pt-4 => 4*4 = 16
+    paddingBottom: 20,
+  },
+  headerText: {
+    color: '#000',
+    fontSize: 22,   // text-xl => 20
+    fontWeight: 'bold',
   },
 });
