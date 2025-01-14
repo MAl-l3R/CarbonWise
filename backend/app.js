@@ -41,11 +41,27 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // ---------------------
 app.post('/calculate-carbon-footprint', async (req, res) => {
   try {
-    if (!req.body || !req.body.product) {
+    const { product, ...details } = req.body;
+
+    if (!product) {
       return res.status(400).json({ error: 'Product is required in the request body' });
     }
 
-    const prompt = `Give me an estimate of the carbon footprint of my ${req.body.product}. Just tell me the estimated numerical value in the "X kg CO2e" format, without any explanation. If there is a range then give me the average.`;
+    // Start with the base prompt
+    let prompt = `Give me an estimate of the carbon footprint of my ${product}.`;
+
+    // Add additional fields if they have values
+    const additionalInfo = Object.entries(details)
+      .filter(([key, value]) => value !== null && value !== '') // Ignore null or empty fields
+      .map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`) // Format key names
+      .join(', ');
+
+    if (additionalInfo) {
+      prompt += ` These are all the information I can provide: ${additionalInfo}.`;
+    }
+
+    // Add the closing instruction
+    prompt += ` Just tell me the estimated numerical value in the "X kg CO2e" format, without any explanation. If there is a range then give me the average.`;
 
     const results = [];
     const numberRegex = /([\d.]+)\s*kg CO2e/; // Regex to extract the numerical value
@@ -74,7 +90,7 @@ app.post('/calculate-carbon-footprint', async (req, res) => {
     const average = Math.round(results.reduce((sum, val) => sum + val, 0) / results.length);
 
     // Respond with the average value
-    res.status(200).json({ footprint: `${average} kg CO2e`, values: results });
+    res.status(200).json({ footprint: `${average} kg CO2e`, values: results, prompt: prompt });
 
   } catch (error) {
     console.error('Error calculating carbon footprint:', error);
@@ -88,25 +104,44 @@ app.post('/calculate-carbon-footprint', async (req, res) => {
 app.post('/reduce-carbon-footprint', async (req, res) => {
   try {
     let prompt;
+
     if (!req.body || !req.body.product) {
+      // Default prompt when no product is specified
       prompt = `How to reduce my carbon footprint? Provide practical tips in about 200 words, keeping them concise but informative.`;
     } else {
-      prompt = `How to reduce the carbon footprint from my ${req.body.product}? Provide practical tips in about 200 words, keeping them concise but informative.`;
+      // Build dynamic prompt based on product and additional details
+      const { product, ...details } = req.body;
+
+      prompt = `How to reduce the carbon footprint from my ${product}?`;
+
+      // Add additional fields if they have values
+      const additionalInfo = Object.entries(details)
+        .filter(([key, value]) => value !== null && value !== '') // Ignore null or empty fields
+        .map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`) // Format key names
+        .join(', ');
+
+      if (additionalInfo) {
+        prompt += ` These are all the information I can provide: ${additionalInfo}.`;
+      }
+
+      // Add the closing instruction
+      prompt += ` Provide practical tips in about 200 words, keeping them concise but informative.`;
     }
 
     // Call Gemini AI with the prompt
     const result = await model.generateContent(prompt, {
       temperature: 0.7, // Encourage creative and varied suggestions
-      max_tokens: 100,  // Allow for detailed responses
+      max_tokens: 200,  // Allow for detailed responses
     });
 
-    res.status(200).json({ response: result.response.text() });
+    res.status(200).json({ tips: result.response.text(), prompt: prompt });
 
   } catch (error) {
     console.log('Error getting tips for reducing carbon footprint:', error);
     res.status(500).json({ error: 'Failed to get tips for reducing carbon footprint', details: error.message });
   }
 });
+
 
 // ---------------------
 // NEW: Detect Objects Route
