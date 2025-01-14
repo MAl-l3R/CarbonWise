@@ -10,16 +10,16 @@ const Add = () => {
     <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
 
       
-      {/* Navigate to Carbon Calculator */}
+      {/* Navigate to ManualEntryForm */}
       <Button
-        title="Go to Carbon Calculator"
-        onPress={() => router.push("/CarbonCalculator")}
+        title="Enter Details Manually"
+        onPress={() => router.push("/manual-entry")}
       />
 
       {/* Navigate to Select Image */}
       <Button
-        title="Go to Select Image"
-        onPress={() => router.push("/SelectImage")}
+        title="Upload Product Image"
+        onPress={() => router.push("/upload-image")}
         style={{ marginTop: 20 }}
       />
     </SafeAreaView>

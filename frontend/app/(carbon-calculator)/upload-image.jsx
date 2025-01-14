@@ -4,7 +4,8 @@ import { View, Text, Alert, Image, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 
-import CustomButton from "../components/CustomButton";
+import CustomButton from "../../components/CustomButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function DetectObject() {
   const [imageUri, setImageUri] = useState(null);
@@ -75,7 +76,7 @@ export default function DetectObject() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Object Localization</Text>
 
       {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
@@ -98,7 +99,7 @@ export default function DetectObject() {
           <Text style={styles.objectText}>{detectedObjects}</Text>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
