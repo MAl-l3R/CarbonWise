@@ -35,11 +35,15 @@ const ManualEntry = () => {
 
     if (!form.product.trim()) {
       newErrors.product = "Product Name is required.";
-    } 
+    }
 
     if (!form.functionality.trim()) {
       newErrors.functionality = "Product Functionality is required.";
-    } 
+    }
+
+    if (!form.usage_frequency.trim()) {
+      newErrors.usage_frequency = "Usage Frequency is required.";
+    }
 
     return newErrors;
   };
@@ -132,6 +136,18 @@ const ManualEntry = () => {
             <Text style={styles.errorMessage}>{errors.functionality}</Text>
           )}
 
+          {/* Form Field - Usage Frequency */}
+          <FormField
+            title="Usage Frequency"
+            value={form.usage_frequency}
+            placeholder="(e.g., daily, 4 hours/week, mileage)"
+            handleChangeText={(e) => setForm({ ...form, usage_frequency: e })}
+            containerStyles={{ marginTop: 20 }}
+          />
+          {errors.usage_frequency && (
+            <Text style={styles.errorMessage}>{errors.usage_frequency}</Text>
+          )}
+
           {/* Form Field - Weight */}
           <FormField
             title="Weight (Optional)"
@@ -156,15 +172,6 @@ const ManualEntry = () => {
             value={form.energy_consumption}
             placeholder="(e.g., 50 kWh/year, 150W)"
             handleChangeText={(e) => setForm({ ...form, energy_consumption: e })}
-            containerStyles={{ marginTop: 20 }}
-          />
-
-          {/* Form Field - Usage Frequency */}
-          <FormField
-            title="Usage Frequency (Optional)"
-            value={form.usage_frequency}
-            placeholder="(e.g., daily, 4 hours/week, mileage)"
-            handleChangeText={(e) => setForm({ ...form, usage_frequency: e })}
             containerStyles={{ marginTop: 20 }}
           />
 
