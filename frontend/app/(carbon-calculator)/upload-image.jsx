@@ -3,6 +3,8 @@ import { View, Text, Alert, Image, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 
+
+
 import CustomButton from "../../components/CustomButton";
 
 export default function DetectObject() {
@@ -42,7 +44,7 @@ export default function DetectObject() {
     }
 
     try {
-        const api_key = process.env.VISION_API_KEY;
+        
       const endpoint = `https://vision.googleapis.com/v1/images:annotate?key=${api_key}`;
 
       // Convert image to Base64

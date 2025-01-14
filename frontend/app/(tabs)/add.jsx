@@ -22,6 +22,13 @@ const Add = () => {
         onPress={() => router.push("/upload-image")}
         style={{ marginTop: 20 }}
       />
+
+    <Button
+        title="Take Picture"
+        onPress={() => router.push("/take-picture")}
+        style={{ marginTop: 20 }}
+      />
+
     </SafeAreaView>
   );
 };
