@@ -3,6 +3,7 @@ import { View, Text, Button, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import CustomButton from "../../components/CustomButton";
+import { images } from "../../constants";
 
 const Add = () => {
   const router = useRouter();
@@ -11,13 +12,15 @@ const Add = () => {
     <SafeAreaView style={styles.container}>
 
       <Text style={styles.title}>Add Item</Text>
-      
+
       {/* Navigate to ManualEntryForm */}
       <CustomButton
         title="Enter Details Manually"
         handlePress={() => router.push("/manual-entry")}
-        containerStyles={{ marginTop: 35, height: 256, width: '90%' }}
+        containerStyles={{ marginTop: 38, height: 256, width: '90%' }}
         textStyles={{ fontWeight: 'bold', fontSize: 24 }}
+        backgroundImage={images.document}
+        backgroundStartsLeft={true}
       />
 
       {/* Navigate to Upload Image */}
@@ -26,13 +29,15 @@ const Add = () => {
         handlePress={() => router.push("/upload-image")}
         containerStyles={{ marginTop: 30, height: 256, width: '90%' }}
         textStyles={{ fontWeight: 'bold', fontSize: 24 }}
+        backgroundImage={images.camera}
+        backgroundStartsRight={true}
       />
 
-      <Button
+      {/* <Button
         title="Take Picture"
         onPress={() => router.push("/take-picture")}
         style={{ marginTop: 20 }}
-      />
+      /> */}
 
     </SafeAreaView>
   );
