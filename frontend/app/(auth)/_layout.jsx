@@ -16,8 +16,7 @@ const AuthLayout = () => {
           options={{headerShown: false}}
         />
       </Stack>
-      <StatusBar style="auto" />
-      {/* <StatusBar backgroundColor='#ffffff' style='dark' /> */}
+      <StatusBar backgroundColor='transparent' style='light' />
     </>
   )
 }

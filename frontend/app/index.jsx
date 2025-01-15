@@ -75,7 +75,7 @@ import {
           </View>
         </View>
   
-        <StatusBar backgroundColor="#ffffff" style="dark" />
+        <StatusBar backgroundColor='transparent' style='light' />
       </SafeAreaView>
     );
   };

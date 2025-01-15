@@ -67,36 +67,14 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     ...StyleSheet.absoluteFillObject, // Fills the entire button
-
-    // width: '120%', // Enlarges the image
-    // left: '-40%', // Shifts the image to start from the left
-
-    // width: '140%', // Enlarges the image
-    // left: '-60%', // Shifts the image to start from the left
-
-    // width: '130%', // Enlarges the image
-    // left: '-50%', // Shifts the image to start from the left
   },
   backgroundStartsLeft: {
     width: '140%', // Enlarges the image
     left: '-60%', // Shifts the image to start from the left
-
-    // width: '120%', // Enlarges the image
-    // left: '-40%', // Shifts the image to start from the left
-
-    // width: '130%', // Enlarges the image
-    // left: '-50%', // Shifts the image to start from the left
   },
   backgroundStartsRight: {
     width: '120%', // Enlarges the image
-    left: '-3%', // Shifts the image to start from the left
-    
-    // width: '115%', // Enlarges the image
-    // left: '-5%', // Shifts the image to start from the left
-
-    // width: '130%', // Enlarges the image
-    // left: '0%', // Shifts the image to start from the left
-    
+    left: '-3%',  // Shifts the image to start from the left
     transform: [{ rotate: '10deg' }]
   },
   textContainer: {

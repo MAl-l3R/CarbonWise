@@ -5,7 +5,6 @@ import { useRouter } from "expo-router";
 import CustomButton from "../../components/CustomButton";
 import { images } from "../../constants";
 
-
 const Add = () => {
   const router = useRouter();
 
@@ -64,7 +63,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    paddingTop: 16,
+    paddingTop: 10,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 8,

@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // flex-row
     alignItems: 'center', // items-center
     gap: 12, // gap-3 => approximately 12px
-    paddingTop: 16, // pt-4 => 4*4 = 16
+    paddingTop: 10, // pt-4 => 4*4 = 16
     paddingBottom: 20,
   },
   headerText: {

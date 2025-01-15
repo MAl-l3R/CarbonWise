@@ -39,7 +39,7 @@ export default function RootLayout() {
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(carbon-calculator)" options={{ headerShown: false }} />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar backgroundColor='transparent' style='light' />
     </AuthProvider>
   );
 }

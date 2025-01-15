@@ -233,7 +233,7 @@ const ManualEntry = () => {
             {isSubmitting ? (
               <ActivityIndicator 
                 size="large" 
-                color="#0000ff" 
+                color="#fff" 
                 style={{ marginTop: 23, marginBottom: 30 }} 
               />
             ) : (
@@ -271,8 +271,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // flex-row
     alignItems: 'center', // items-center
     gap: 12, // gap-3 => approximately 12px
-    paddingTop: 16, // pt-4 => 4*4 = 16
-    paddingBottom: 4,
+    paddingTop: 10, // pt-4 => 4*4 = 16
   },
   headerText: {
     color: '#000',
@@ -283,5 +282,7 @@ const styles = StyleSheet.create({
   errorMessage: {
     color: '#ef4444', 
     marginTop: 4,
+    fontWeight: 600,
+    fontSize: 15,
   },
 });

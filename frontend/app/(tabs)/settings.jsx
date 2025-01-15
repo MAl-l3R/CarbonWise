@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    paddingTop: 16,
+    paddingTop: 10,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 8,
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'left',
     marginLeft: 16,
-    paddingTop: 18,
+    paddingTop: 6,
     paddingBottom: 4,
     color: '#fff', // White text for better visibility
   },

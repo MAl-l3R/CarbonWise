@@ -41,13 +41,13 @@ const TabsLayout = () => {
     // While loading the user data, return null or a loading indicator
     if (loading) {
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#fff" />
       </View>
     }
 
-    // if (!currentUser) {
-    //   return <Redirect href="/" />;  // Go back to onboarding screen instead of just sign in screen
-    // }
+    if (!currentUser) {
+      return <Redirect href="/" />;  // Go back to onboarding screen instead of just sign in screen
+    }
 
   return (
     <>
@@ -65,7 +65,7 @@ const TabsLayout = () => {
             borderRadius: 50,
             height: 70,
             paddingVertical: Platform.OS === 'ios' ? 30 : 0,
-            marginBottom: 10,
+            marginBottom: 0,
             marginHorizontal: 25,
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.3,
@@ -118,7 +118,7 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
-      <StatusBar backgroundColor='#ffffff' style='dark' />
+      <StatusBar backgroundColor='transparent' style='light' />
     </>
   )
 }
