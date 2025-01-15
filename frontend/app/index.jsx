@@ -59,7 +59,8 @@ import {
               <CustomButton
                 title="Sign Up"
                 handlePress={() => router.push('/sign-up')}
-                containerStyles={styles.signUpButton} 
+                containerStyles={styles.signUpButton}
+                textStyles={{color: 'white'}}
               />
             </View>
   
@@ -145,6 +146,7 @@ import {
     signUpButton: {
       width: '100%',
       marginTop: 30, // mt-5 => 20
+      backgroundColor: '#68B637'
     },
     footer: {
       flexDirection: 'row', 

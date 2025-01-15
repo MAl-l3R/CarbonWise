@@ -131,7 +131,10 @@ const SignUp = () => {
             placeholder="Name"
             handleChangeText={(e) => setForm({ ...form, name: e })}
             containerStyles={{ marginTop: 20 }} // Replaces "mt-10" => 10*4=40
+            formFieldStyles={{backgroundColor: '#f3f4f6'}}
+            labelStyles={{color:'#000', fontWeight: 400}}
           />
+
           {errors.name && (
             <Text style={styles.errorMessage}>{errors.name}</Text>
           )}
@@ -143,6 +146,8 @@ const SignUp = () => {
             placeholder="Email Address"
             handleChangeText={(e) => setForm({ ...form, email: e })}
             containerStyles={{ marginTop: 20 }} // Replaces "mt-10" => 10*4=40
+            formFieldStyles={{backgroundColor: '#f3f4f6'}}
+            labelStyles={{color:'#000', fontWeight: 400}}
             keyboardType="email-address"
           />
           {errors.email && (
@@ -156,6 +161,8 @@ const SignUp = () => {
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
             containerStyles={{ marginTop: 20 }} // Replaces "mt-5" => 5*4=20
+            formFieldStyles={{backgroundColor: '#f3f4f6'}}
+            labelStyles={{color:'#000', fontWeight: 400}}
             secureTextEntry={true}
           />
           {errors.password && (
@@ -169,6 +176,8 @@ const SignUp = () => {
             value={form.confirmPassword}
             handleChangeText={(e) => setForm({ ...form, confirmPassword: e })}
             containerStyles={{ marginTop: 20 }} // Replaces "mt-5" => 5*4=20
+            formFieldStyles={{backgroundColor: '#f3f4f6'}}
+            labelStyles={{color:'#000', fontWeight: 400}}
             secureTextEntry={true}
           />
           {errors.confirmPassword && (
@@ -189,7 +198,8 @@ const SignUp = () => {
             <CustomButton
               title="Sign Up"
               handlePress={submit}
-              containerStyles={{ marginTop: 23, marginBottom: 30 }}
+              containerStyles={{ marginTop: 23, marginBottom: 30, backgroundColor: '#68B637' }}
+              textStyles={{color: 'white'}}
               isLoading={isSubmitting}
             />
           )}

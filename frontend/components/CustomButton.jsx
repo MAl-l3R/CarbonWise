@@ -47,7 +47,7 @@ export default CustomButton;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#68B637', // Replace with your "bg-secondary" color
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Replace with your "bg-secondary" color
     borderRadius: 12, // rounded-xl
     minHeight: 40, // min-h-[40px]
     justifyContent: 'center',
@@ -109,8 +109,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: '#324958', // #2E5A4F
     fontWeight: 'bold',
     textAlign: 'center',
+    fontSize: 16,
   },
 });

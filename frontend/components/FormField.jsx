@@ -15,6 +15,7 @@ const FormField = ({
   placeholder, 
   handleChangeText, 
   editable, 
+  labelStyles, 
   containerStyles, 
   keyboardType, 
   formFieldStyles, 
@@ -32,7 +33,7 @@ const FormField = ({
 
   return (
     <View style={[styles.container, containerStyles]}>
-      <Text style={styles.label}>{title}</Text>
+      <Text style={[styles.label, labelStyles]}>{title}</Text>
 
       <View style={[styles.inputContainer, formFieldStyles, dynamicInputContainerStyle]}>
         <TextInput
@@ -71,12 +72,14 @@ const styles = StyleSheet.create({
     marginBottom: 8, 
   },
   label: {
+    color: '#fff',
+    fontWeight: 600,
     fontSize: 16,
     fontFamily: 'pmedium',
     marginBottom: 7,
   },
   inputContainer: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     minHeight: 56,
     width: '100%',
     paddingHorizontal: 16,

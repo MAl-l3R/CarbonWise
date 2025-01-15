@@ -102,6 +102,8 @@ const SignIn = () => {
             placeholder="Email Address"
             handleChangeText={(e) => setForm({ ...form, email: e })}
             containerStyles={{ marginTop: 20 }} // Replaces "mt-10" => 10*4=40
+            formFieldStyles={{backgroundColor: '#f3f4f6'}}
+            labelStyles={{color:'#000', fontWeight: 400}}
             keyboardType="email-address"
           />
           {errors.email && (
@@ -115,6 +117,8 @@ const SignIn = () => {
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
             containerStyles={{ marginTop: 20 }} // Replaces "mt-5" => 5*4=20
+            formFieldStyles={{backgroundColor: '#f3f4f6'}}
+            labelStyles={{color:'#000', fontWeight: 400}}
             secureTextEntry={true}
           />
           {errors.password && (
@@ -134,7 +138,8 @@ const SignIn = () => {
             <CustomButton
               title="Sign In"
               handlePress={submit}
-              containerStyles={{ marginTop: 23, marginBottom: 30 }}
+              containerStyles={{ marginTop: 23, marginBottom: 30, backgroundColor: '#68B637' }}
+              textStyles={{color: 'white'}}
               isLoading={isSubmitting}
             />
           )}
