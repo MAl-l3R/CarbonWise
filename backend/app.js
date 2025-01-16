@@ -41,14 +41,14 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // ---------------------
 app.post('/calculate-carbon-footprint', async (req, res) => {
   try {
-    const { product, ...details } = req.body;
+    const { product_name, ...details } = req.body;
 
-    if (!product) {
+    if (!product_name) {
       return res.status(400).json({ error: 'Product is required in the request body' });
     }
 
     // Start with the base prompt
-    let prompt = `Give me an estimate of the carbon footprint of my ${product}.`;
+    let prompt = `Give me an estimate of the carbon footprint of my ${product_name}.`;
 
     // Add additional fields if they have values
     const additionalInfo = Object.entries(details)
@@ -105,14 +105,14 @@ app.post('/reduce-carbon-footprint', async (req, res) => {
   try {
     let prompt;
 
-    if (!req.body || !req.body.product) {
+    if (!req.body || !req.body.product_name) {
       // Default prompt when no product is specified
       prompt = `How to reduce my carbon footprint? Provide practical tips in about 200 words, keeping them concise but informative.`;
     } else {
       // Build dynamic prompt based on product and additional details
-      const { product, ...details } = req.body;
+      const { product_name, ...details } = req.body;
 
-      prompt = `How to reduce the carbon footprint from my ${product}?`;
+      prompt = `How to reduce the carbon footprint from my ${product_name}?`;
 
       // Add additional fields if they have values
       const additionalInfo = Object.entries(details)

@@ -1,13 +1,18 @@
-import { ImageBackground, StyleSheet, Text, View, ScrollView } from 'react-native';
-import React from 'react';
+import { ImageBackground, StyleSheet, Text, View, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { images } from "../../constants";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import CustomButton from '../../components/CustomButton';
+import { db } from '../../lib/firebase';
+import { useAuth } from '../../lib/AuthContext';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 const Results = () => {
+  const { loading, currentUser } = useAuth();
   const item = useLocalSearchParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Function to parse and render bold text
   const renderTipsWithBold = (tips) => {
@@ -33,15 +38,30 @@ const Results = () => {
 
   // Save Product to Firebase function
   const saveProduct = async () => {
-      try {
-        // Save item to Firebase
+    setIsSubmitting(true);
+    try {
+      // Create a copy of the item without the __EXPO_ROUTER_key field
+      const { __EXPO_ROUTER_key, ...filteredItem } = item;
 
-        // On success, redirect to user's dashboard in home screen
-        router.replace('/home');
-      } catch (error) {
-        console.error('Error saving product: ', error);
-      }
-    };
+      const product = {
+        ...filteredItem,
+        date_added: Timestamp.now(),
+      };
+
+      // Save to Firebase
+      const productsRef = collection(db, 'accounts', currentUser.uid, 'products');
+      await addDoc(productsRef, product);
+
+      // Redirect user to Home screen
+      router.replace('/home');
+
+    } catch (error) {
+      console.log('Error saving product: ', error);
+      Alert.alert('Failed to save the product. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <ImageBackground source={images.background} style={styles.background}>
@@ -67,7 +87,7 @@ const Results = () => {
 
           {/* Reduction Tips Section */}
           <View style={styles.tipsContainer}>
-            <Text style={styles.tipsTitle}>How to Reduce Your Carbon Footprint for Your {item.product}?</Text>
+            <Text style={styles.tipsTitle}>How to Reduce Your Carbon Footprint for Your {item.product_name}?</Text>
             {item.tips ? (
               <Text style={styles.tipText}>
                 {renderTipsWithBold(item.tips)}
@@ -77,12 +97,18 @@ const Results = () => {
             )}
           </View>
 
-          <CustomButton
-            title="Save Product"
-            handlePress={saveProduct}
-            containerStyles={{
-            }}
-          />
+          {isSubmitting ? (
+            <ActivityIndicator 
+              size="large" 
+              color="#fff" 
+            />
+          ) : (
+            <CustomButton
+              title="Save Product"
+              handlePress={saveProduct}
+              isLoading={isSubmitting}
+            />
+          )}
         </ScrollView>
       </SafeAreaView>
     </ImageBackground>
@@ -117,7 +143,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   resultCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background
+    backgroundColor: 'rgba(255, 255, 255, 0.85)', // Semi-transparent white background
     borderRadius: 12,
     padding: 16,
     marginVertical: 20,
@@ -135,7 +161,7 @@ const styles = StyleSheet.create({
     color: '#2E5A4F', // Slightly lighter green
   },
   tipsContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background
+    backgroundColor: 'rgba(255, 255, 255, 0.85)', // Semi-transparent white background
     borderRadius: 12,
     padding: 20,
     marginBottom: 20,

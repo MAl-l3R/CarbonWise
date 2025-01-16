@@ -17,7 +17,7 @@ import { images } from "../../constants";
 
 const ManualEntry = () => {
   const [form, setForm] = useState({
-    product: '',
+    product_name: '',
     functionality: '',
     weight: '',
     material_type: '',
@@ -35,8 +35,8 @@ const ManualEntry = () => {
   const validateFields = () => {
     const newErrors = {};
 
-    if (!form.product.trim()) {
-      newErrors.product = "Product Name is required.";
+    if (!form.product_name.trim()) {
+      newErrors.product_name = "Product Name is required.";
     }
 
     if (!form.functionality.trim()) {
@@ -59,7 +59,7 @@ const ManualEntry = () => {
       setIsSubmitting(true);
       try {
         const product_details = {
-          product: form.product,
+          product_name: form.product_name,
           functionality: form.functionality,
           weight: form.weight || null,
           material_type: form.material_type || null,
@@ -92,6 +92,7 @@ const ManualEntry = () => {
 
       } catch (error) {
         setErrors({ general: error.message });
+        console.log('Error calculating carbon footprint: ', error);
       } finally {
         setIsSubmitting(false);
       }
@@ -118,13 +119,13 @@ const ManualEntry = () => {
             {/* Form Field - Product Name */}
             <FormField
               title="Product Name"
-              value={form.product}
+              value={form.product_name}
               placeholder="(e.g., Laptop, Mug, Electric Car)"
-              handleChangeText={(e) => setForm({ ...form, product: e })}
+              handleChangeText={(e) => setForm({ ...form, product_name: e })}
               containerStyles={{ marginTop: 20 }}
             />
-            {errors.product && (
-              <Text style={styles.errorMessage}>{errors.product}</Text>
+            {errors.product_name && (
+              <Text style={styles.errorMessage}>{errors.product_name}</Text>
             )}
 
             {/* Form Field - Functionality */}

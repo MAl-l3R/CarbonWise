@@ -1,9 +1,18 @@
 import { View, Text, StyleSheet, ImageBackground } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from "../../constants";
+import { useAuth } from '../../lib/AuthContext';
 
 const Home = () => {
+  const { loading, currentUser } = useAuth();
+
+  useEffect(()=>{
+    if (!loading && !currentUser) {
+      router.replace('/');
+    }
+  }, [loading, currentUser])
+
   return (
     <ImageBackground source={images.background} style={styles.background}>
       <SafeAreaView style={styles.container}>
