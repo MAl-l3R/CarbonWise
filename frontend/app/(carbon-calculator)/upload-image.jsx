@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Alert, Image, StyleSheet } from "react-native";
+import { View, Text, Alert, Image, StyleSheet, ActivityIndicator } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -7,11 +7,15 @@ import CustomButton from "../../components/CustomButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from 'expo-router';
 
+// 1) Pull in your backend URL from .env
+
+// If using react-native-dotenv, you might do: import { BACKEND_URL } from '@env';
+
 export default function DetectObject() {
   const [imageUri, setImageUri] = useState(null);
   const [detectedObjects, setDetectedObjects] = useState("");
 
-  // Step 1: Pick Image
+  // Step 1: Pick Image from gallery
   const pickImage = async () => {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -36,7 +40,7 @@ export default function DetectObject() {
     }
   };
 
-  // Step 2: Analyze Image
+  // Step 2: Analyze Image (calls your backend)
   const analyzeImage = async () => {
     if (!imageUri) {
       Alert.alert("Error", "Please select an image first.");
@@ -44,42 +48,25 @@ export default function DetectObject() {
     }
 
     try {
-        
-      const endpoint = `https://vision.googleapis.com/v1/images:annotate?key=${api_key}`;
-
       // Convert image to Base64
       const base64Image = await FileSystem.readAsStringAsync(imageUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      // Prepare request body
-      const requestData = {
-        requests: [
-          {
-            image: { content: base64Image },
-            features: [{ type: "OBJECT_LOCALIZATION", maxResults: 10 }],
-          },
-        ],
-      };
+      
 
-      // Make API Call
-      const response = await fetch(endpoint, {
+      // Make API Call to your own server
+      const response = await fetch(`http://detect-objects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestData),
+        body: JSON.stringify({ base64Image }),
       });
 
       const responseJson = await response.json();
-      console.log("VISION API RESPONSE:", responseJson);
+      console.log("BACKEND RESPONSE:", responseJson);
 
-      if (
-        responseJson.responses &&
-        responseJson.responses[0]?.localizedObjectAnnotations?.length > 0
-      ) {
-        const detectedNames = responseJson.responses[0].localizedObjectAnnotations
-          .map((obj) => obj.name)
-          .join(", ");
-        setDetectedObjects(detectedNames);
+      if (responseJson.success === true) {
+        setDetectedObjects(responseJson.objects);
       } else {
         setDetectedObjects("No objects detected. Try another image.");
       }
@@ -104,6 +91,7 @@ export default function DetectObject() {
         />
         <Text style={styles.headerText}>Carbon Footprint Calculator</Text>
       </View>
+      <ActivityIndicator/>
 
       {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
 
@@ -134,7 +122,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#ffffff',
     flex: 1,
-    paddingHorizontal: 25, // px-4 => 16
+    paddingHorizontal: 25,
   },
   image: {
     width: 250,
@@ -159,15 +147,15 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   headerContainer: {
-    flexDirection: 'row', // flex-row
-    alignItems: 'center', // items-center
-    gap: 12, // gap-3 => approximately 12px
-    paddingTop: 10, // pt-4 => 4*4 = 16
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   headerText: {
     color: '#000',
-    fontSize: 22,   // text-xl => 20
+    fontSize: 22,
     fontWeight: 'bold',
   },
 });

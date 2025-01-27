@@ -7,78 +7,75 @@ const PORT = 3000;
 
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// ---------------------
-// Middleware
-// ---------------------
+// -------------------------------------------------
+// 1) MIDDLEWARE
+// -------------------------------------------------
 app.use(cors());
-app.use(express.json());
 
-// ---------------------
-// Initialize Gemini AI model
-// ---------------------
+// IMPORTANT: Increase request size limits to handle large base64 payloads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Other config...
+// (If you don't use URL-encoded forms, you can skip the second line)
+
+// -------------------------------------------------
+// Initialize Gemini AI model (Optional for your app)
+// -------------------------------------------------
 const apiKey = process.env.API_KEY;
 if (!apiKey) {
-  throw new Error('API_KEY is missing in the .env file');
+  console.warn('Warning: API_KEY for Gemini AI is missing in the .env file');
 }
 const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 const model2 = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
-// ---------------------
-// Routes
-// ---------------------
+// -------------------------------------------------
+// Test route
+// -------------------------------------------------
 app.get('/', (req, res) => {
   res.send('Welcome to CarbonWise!');
 });
 
-// ---------------------
+// -------------------------------------------------
 // Delay function
-// ---------------------
+// -------------------------------------------------
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// ---------------------
-// Calculate carbon footprint
-// ---------------------
+// -------------------------------------------------
+// Calculate carbon footprint route (example)
+// -------------------------------------------------
 app.post('/calculate-carbon-footprint', async (req, res) => {
   try {
     const { product_name, ...details } = req.body;
-
     if (!product_name) {
       return res.status(400).json({ error: 'Product is required in the request body' });
     }
 
-    // Start with the base prompt
     let prompt = `Give me an estimate of the carbon footprint of my ${product_name}.`;
-
-    // Add additional fields if they have values
     const additionalInfo = Object.entries(details)
-      .filter(([key, value]) => value !== null && value !== '') // Ignore null or empty fields
-      .map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`) // Format key names
+      .filter(([_, value]) => value !== null && value !== '')
+      .map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`)
       .join(', ');
 
     if (additionalInfo) {
       prompt += ` These are all the information I can provide: ${additionalInfo}.`;
     }
-
-    // Add the closing instruction
     prompt += ` Just tell me the estimated numerical value in the "X kg CO2e" format, without any explanation. If there is a range then give me the average.`;
 
     const results = [];
-    const numberRegex = /([\d.]+)\s*kg CO2e/; // Regex to extract the numerical value
+    const numberRegex = /([\d.]+)\s*kg CO2e/;
 
+    // Example repeated calls
     for (let i = 0; i < 3; i++) {
       const result = await model.generateContent(prompt, {
-        temperature: 0.2, // Low randomness for precise and consistent responses
-        max_tokens: 20,   // Limit the output length to ensure brevity
+        temperature: 0.2,
+        max_tokens: 20,
       });
-
-      // Extract numerical value from the response
       const match = result.response.text().match(numberRegex);
       if (match && match[1]) {
         results.push(parseFloat(match[1]));
       }
-
-      // Delay of 1 second between requests
       if (i < 2) await sleep(1000);
     }
 
@@ -86,66 +83,50 @@ app.post('/calculate-carbon-footprint', async (req, res) => {
       return res.status(500).json({ error: 'Failed to parse carbon footprint values from the responses' });
     }
 
-    // Calculate the average
     const average = Math.round(results.reduce((sum, val) => sum + val, 0) / results.length);
-
-    // Respond with the average value
     res.status(200).json({ footprint: `${average} kg CO2e`, values: results, prompt: prompt });
-
   } catch (error) {
     console.error('Error calculating carbon footprint:', error);
     res.status(500).json({ error: 'Failed to calculate carbon footprint', details: error.message });
   }
 });
 
-// ---------------------
-// Reduce carbon footprint
-// ---------------------
+// -------------------------------------------------
+// Reduce carbon footprint route (example)
+// -------------------------------------------------
 app.post('/reduce-carbon-footprint', async (req, res) => {
   try {
     let prompt;
-
     if (!req.body || !req.body.product_name) {
-      // Default prompt when no product is specified
       prompt = `How to reduce my carbon footprint? Provide practical tips in about 200 words, keeping them concise but informative.`;
     } else {
-      // Build dynamic prompt based on product and additional details
       const { product_name, ...details } = req.body;
-
       prompt = `How to reduce the carbon footprint from my ${product_name}?`;
-
-      // Add additional fields if they have values
       const additionalInfo = Object.entries(details)
-        .filter(([key, value]) => value !== null && value !== '') // Ignore null or empty fields
-        .map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`) // Format key names
+        .filter(([_, value]) => value !== null && value !== '')
+        .map(([key, value]) => `${key.replace(/_/g, ' ')}: ${value}`)
         .join(', ');
-
       if (additionalInfo) {
         prompt += ` These are all the information I can provide: ${additionalInfo}.`;
       }
-
-      // Add the closing instruction
       prompt += ` Provide practical tips in about 200 words, keeping them concise but informative.`;
     }
 
-    // Call Gemini AI with the prompt
     const result = await model.generateContent(prompt, {
-      temperature: 0.7, // Encourage creative and varied suggestions
-      max_tokens: 200,  // Allow for detailed responses
+      temperature: 0.7,
+      max_tokens: 200,
     });
 
     res.status(200).json({ tips: result.response.text(), prompt: prompt });
-
   } catch (error) {
     console.log('Error getting tips for reducing carbon footprint:', error);
     res.status(500).json({ error: 'Failed to get tips for reducing carbon footprint', details: error.message });
   }
 });
 
-
-// ---------------------
-// NEW: Detect Objects Route
-// ---------------------
+// -------------------------------------------------
+// Detect Objects route (Google Vision API)
+// -------------------------------------------------
 app.post('/detect-objects', async (req, res) => {
   try {
     if (!req.body || !req.body.base64Image) {
@@ -156,12 +137,12 @@ app.post('/detect-objects', async (req, res) => {
     }
 
     const base64Image = req.body.base64Image;
-    const visionApiKey = process.env.VISION_API_KEY; // In .env
+    const visionApiKey = process.env.VISION_API_KEY; // from .env
 
     if (!visionApiKey) {
       return res.status(500).json({
         success: false,
-        message: 'Google Vision API Key not found in server',
+        message: 'Google Vision API Key not found in server .env',
       });
     }
 
@@ -211,9 +192,9 @@ app.post('/detect-objects', async (req, res) => {
   }
 });
 
-// ---------------------
-// Start Server
-// ---------------------
+// -------------------------------------------------
+// Start the server
+// -------------------------------------------------
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

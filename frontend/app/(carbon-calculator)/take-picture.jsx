@@ -3,6 +3,15 @@ import { View, Text, Alert, Image, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import CustomButton from "../../components/CustomButton";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { router } from 'expo-router';
+
+// 1) Pull in your backend URL from .env
+// If you're using Expo's built-in env approach:
+
+// If using react-native-dotenv, you might do:
+// import { BACKEND_URL } from '@env';
 
 export default function TakePicture() {
   const [imageUri, setImageUri] = useState(null);
@@ -32,7 +41,7 @@ export default function TakePicture() {
     }
   };
 
-  // Step 2: Analyze Image
+  // Step 2: Analyze Image (calls your backend)
   const analyzeImage = async () => {
     if (!imageUri) {
       Alert.alert("Error", "Please take a picture first.");
@@ -40,42 +49,23 @@ export default function TakePicture() {
     }
 
     try {
-      
-      const endpoint = `https://vision.googleapis.com/v1/images:annotate?key=${api_key}`;
-
       // Convert image to Base64
       const base64Image = await FileSystem.readAsStringAsync(imageUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      // Prepare request body
-      const requestData = {
-        requests: [
-          {
-            image: { content: base64Image },
-            features: [{ type: "OBJECT_LOCALIZATION", maxResults: 10 }],
-          },
-        ],
-      };
-
-      // Make API Call
-      const response = await fetch(endpoint, {
+      // Make API Call to your own server
+      const response = await fetch(`http:/detect-objects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestData),
+        body: JSON.stringify({ base64Image }),
       });
 
       const responseJson = await response.json();
-      console.log("VISION API RESPONSE:", responseJson);
+      console.log("BACKEND RESPONSE:", responseJson);
 
-      if (
-        responseJson.responses &&
-        responseJson.responses[0]?.localizedObjectAnnotations?.length > 0
-      ) {
-        const detectedNames = responseJson.responses[0].localizedObjectAnnotations
-          .map((obj) => obj.name)
-          .join(", ");
-        setDetectedObjects(detectedNames);
+      if (responseJson.success === true) {
+        setDetectedObjects(responseJson.objects);
       } else {
         setDetectedObjects("No objects detected. Try another image.");
       }
@@ -86,7 +76,15 @@ export default function TakePicture() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.headerContainer}>
+        <Ionicons
+          name="arrow-back-outline"
+          size={24}
+          color="black"
+          onPress={() => {
+            router.back();
+          }}
+        />
       <Text style={styles.title}>Object Detection</Text>
 
       {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
@@ -115,13 +113,7 @@ export default function TakePicture() {
 
 // --- Styles ---
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  
   title: {
     fontSize: 24,
     fontWeight: "bold",

@@ -21,7 +21,7 @@ const Add = () => {
         <CustomButton
           title="Enter Details Manually"
           handlePress={() => router.push("/manual-entry")}
-          containerStyles={{ marginTop: 20, height: 256, width: "100%" }}
+          containerStyles={{ marginTop: 20, height: 165, width: "100%" }}
           textStyles={{ fontWeight: "bold", fontSize: 24 }}
           backgroundImage={images.document}
           backgroundStartsLeft={true}
@@ -31,7 +31,15 @@ const Add = () => {
         <CustomButton
           title="Upload Product Image"
           handlePress={() => router.push("/upload-image")}
-          containerStyles={{ marginTop: 20, height: 256, width: "100%" }}
+          containerStyles={{ marginTop: 20, height: 165, width: "100%" }}
+          textStyles={{ fontWeight: "bold", fontSize: 24 }}
+          backgroundImage={images.camera}
+          backgroundStartsRight={true}
+        />
+        <CustomButton
+          title="Take Prodect Picture"
+          handlePress={() => router.push("/take-picture")}
+          containerStyles={{ marginTop: 20, height: 165, width: "100%" }}
           textStyles={{ fontWeight: "bold", fontSize: 24 }}
           backgroundImage={images.camera}
           backgroundStartsRight={true}

@@ -1,8 +1,10 @@
-import { View, Text, StyleSheet, ImageBackground } from 'react-native'
+import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from "../../constants";
 import { useAuth } from '../../lib/AuthContext';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 const Home = () => {
   const { loading, currentUser } = useAuth();
@@ -17,6 +19,10 @@ const Home = () => {
     <ImageBackground source={images.background} style={styles.background}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Home</Text>
+        <ActivityIndicator/>
+    
+        
+        
       </SafeAreaView>
     </ImageBackground>
   )
@@ -42,5 +48,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 8,
     color: "#fff",
+  },
+  spinnerTextStyle: {
+    color: '#FFF'
   },
 });
