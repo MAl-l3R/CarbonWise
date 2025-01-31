@@ -76,6 +76,7 @@ export default function TakePicture() {
   };
 
   return (
+    <SafeAreaView>
     <View style={styles.headerContainer}>
         <Ionicons
           name="arrow-back-outline"
@@ -108,6 +109,7 @@ export default function TakePicture() {
         </View>
       )}
     </View>
+    </SafeAreaView>
   );
 }
 

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { View, Text, Alert, Image, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, Alert, Image, StyleSheet, ActivityIndicator, ImageBackground } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import CustomButton from "../../components/CustomButton";
+import { images } from '../../constants';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from 'expo-router';
 
@@ -14,6 +15,7 @@ import { router } from 'expo-router';
 export default function DetectObject() {
   const [imageUri, setImageUri] = useState(null);
   const [detectedObjects, setDetectedObjects] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Step 1: Pick Image from gallery
   const pickImage = async () => {
@@ -42,6 +44,8 @@ export default function DetectObject() {
 
   // Step 2: Analyze Image (calls your backend)
   const analyzeImage = async () => {
+     
+    setIsSubmitting(true);
     if (!imageUri) {
       Alert.alert("Error", "Please select an image first.");
       return;
@@ -56,17 +60,25 @@ export default function DetectObject() {
       
 
       // Make API Call to your own server
-      const response = await fetch(`http://detect-objects`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ base64Image }),
-      });
+      // const response = await fetch(`http://10.0.0.234:3000/detect-objects`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ base64Image }),
+      // });
 
-      const responseJson = await response.json();
+      // const responseJson = await response.json();
+      const responseJson = {"objects": "Computer keyboard", "success": true}
       console.log("BACKEND RESPONSE:", responseJson);
 
       if (responseJson.success === true) {
         setDetectedObjects(responseJson.objects);
+        router.push({
+          pathname: '/confirmation',
+          params: {description: responseJson.objects},
+        });
+        setDetectedObjects("");
+        setIsSubmitting(false);
+
       } else {
         setDetectedObjects("No objects detected. Try another image.");
       }
@@ -77,43 +89,49 @@ export default function DetectObject() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+     <ImageBackground source={images.background} style={styles.background}>
+    <SafeAreaView style={styles.safeArea}>
 
       {/* Header and Back button */}
       <View style={styles.headerContainer}>
         <Ionicons
           name="arrow-back-outline"
           size={24}
-          color="black"
+          color="white"
           onPress={() => {
             router.back();
           }}
         />
         <Text style={styles.headerText}>Carbon Footprint Calculator</Text>
       </View>
-      <ActivityIndicator/>
+      
 
       {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+      {isSubmitting ? (
+                    <ActivityIndicator size="large" color="#fff" style={{ marginTop: 23, marginBottom: 30 }} />
+                  ) : (
+                    <View>
 
       <CustomButton
         title="Select Image"
         handlePress={pickImage}
-        containerStyles={{ marginBottom: 20 }}
+        containerStyles={{ marginBottom: 20, marginTop: 20 }}
+        isLoading={isSubmitting}
       />
 
       <CustomButton
         title="Analyze Image"
         handlePress={analyzeImage}
         containerStyles={{ marginBottom: 20 }}
+        isLoading={isSubmitting}
       />
+      </View>
+                  )
 
-      {detectedObjects && (
-        <View style={styles.resultsContainer}>
-          <Text style={styles.resultTitle}>Localized Objects:</Text>
-          <Text style={styles.objectText}>{detectedObjects}</Text>
-        </View>
-      )}
+}
+
     </SafeAreaView>
+    </ImageBackground>
   );
 }
 
@@ -129,6 +147,8 @@ const styles = StyleSheet.create({
     height: 250,
     marginBottom: 20,
     borderRadius: 10,
+    marginTop: 30,
+    marginLeft:75,
     resizeMode: "cover",
   },
   resultsContainer: {
@@ -157,5 +177,53 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 22,
     fontWeight: 'bold',
+  },
+  
+
+
+
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+  safeArea: {
+    backgroundColor: 'transparent',
+    flex: 1,
+  },
+  mainContainer: {
+    width: '100%',
+    height: '100%',
+    paddingHorizontal: 25,
+  },
+  resultCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderRadius: 12,
+    padding: 16,
+    marginVertical: 20,
+    alignItems: 'center',
+  },
+  description: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  responseText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  text_color: {
+    color: 'red',
+  },
+  headerText: {
+    color: 'white',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  headerContainer: {
+    flexDirection: 'row', // flex-row
+    alignItems: 'center', // items-center
+    gap: 12, // gap-3 => approximately 12px
+    paddingTop: 10, // pt-4 => 4*4 = 16
   },
 });
