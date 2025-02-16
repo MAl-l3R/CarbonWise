@@ -89,7 +89,8 @@ const Home = () => {
 
       snapshot.forEach((document) => {
         const data = document.data();
-        // e.g. "150 kg CO2e" -> parse out the numeric part
+
+        // 2.1 Parse footprint (e.g. "150 kg CO2e")
         const footprintString = data?.footprint || '';
         let footprintValue = 0;
         if (footprintString) {
@@ -97,14 +98,30 @@ const Home = () => {
           footprintValue = parseFloat(parts[0]) || 0;
         }
 
+        // 2.2 Parse date_dadded (assume it's a Firestore Timestamp or a valid date string)
+        let dateDaddedJs = null;
+        if (data.date_dadded && data.date_dadded.toDate) {
+          // Firestore Timestamp
+          dateDaddedJs = data.date_dadded.toDate();
+        } else if (data.date_dadded) {
+          // Possibly a string or numeric
+          dateDaddedJs = new Date(data.date_dadded);
+        }
+
         fetchedProducts.push({
           id: document.id,
           ...data,
           footprintValue,
+          date_dadded_js: dateDaddedJs || new Date(0), // fallback if missing
         });
 
         total += footprintValue;
       });
+
+      // 2.3 Sort products by date_dadded_js descending (newest first)
+      fetchedProducts.sort(
+        (a, b) => (b.date_dadded_js?.getTime() || 0) - (a.date_dadded_js?.getTime() || 0)
+      );
 
       setProducts(fetchedProducts);
       setTotalFootprint(total);
@@ -124,34 +141,50 @@ const Home = () => {
   };
 
   /* ------------------------------------------------------------------
-   *  3. Group products by functionality
+   *  3. Group (already sorted) products by functionality
    * ------------------------------------------------------------------ */
-  const groupByFunctionality = () => {
-    const map = {};
-    products.forEach((prod) => {
-      const func = prod.functionality || 'Unknown';
-      if (!map[func]) {
-        map[func] = [];
+  // We'll store them in a structure preserving the sorted order.
+  // Then we can create an array of groups to also sort the functionalities
+  // by the date of their newest product.
+  const groupProductsByFunctionality = (sortedProducts) => {
+    const tempMap = {};
+
+    // Because 'products' is already sorted by date desc, the first item in each group is the newest
+    for (const prod of sortedProducts) {
+      const funcKey = prod.functionality || 'Unknown';
+      if (!tempMap[funcKey]) {
+        tempMap[funcKey] = [];
       }
-      map[func].push(prod);
+      tempMap[funcKey].push(prod);
+    }
+
+    // Now create an array of { funcKey, products[], newestDate }
+    const groupArray = Object.keys(tempMap).map((funcKey) => {
+      const prods = tempMap[funcKey];
+      // prods is already sorted descending
+      // the first product is the newest
+      const newestDate = prods[0].date_dadded_js || new Date(0);
+      return { funcKey, products: prods, newestDate };
     });
-    return map;
+
+    // Sort the array of groups by newestDate descending
+    groupArray.sort((a, b) => b.newestDate - a.newestDate);
+    return groupArray;
   };
 
-  const functionalityMap = groupByFunctionality();
+  const functionalityGroups = groupProductsByFunctionality(products);
 
   /* ------------------------------------------------------------------
    *  4. Prepare data for the donut chart
    * ------------------------------------------------------------------ */
-  // Sum each functionality's footprints to form slices
-  const dataForPie = Object.keys(functionalityMap).map((funcKey, idx) => {
-    const funcProducts = functionalityMap[funcKey];
-    const sumValue = funcProducts.reduce(
+  // We'll sum the footprints in each group to form slices
+  const dataForPie = functionalityGroups.map((group, idx) => {
+    const sumValue = group.products.reduce(
       (acc, p) => acc + (p.footprintValue || 0),
       0
     );
     return {
-      name: funcKey,
+      name: group.funcKey,
       value: sumValue,
       color: sliceColors[idx % sliceColors.length],
     };
@@ -277,13 +310,14 @@ const Home = () => {
                             .outerRadius(outerRadius)
                             .innerRadius(60)(partialArc);
 
+                          // Use <G onPress> to ensure Android can detect taps
                           return (
-                            <Path
+                            <G
                               key={`arc-${index}`}
-                              d={arcPath}
-                              fill={dataForPie[index].color}
                               onPress={() => handleSlicePress(index)}
-                            />
+                            >
+                              <Path d={arcPath} fill={dataForPie[index].color} />
+                            </G>
                           );
                         })}
                         {/* Center text for total footprint */}
@@ -336,9 +370,10 @@ const Home = () => {
               </Text>
             )}
 
-            {/* Functionality Sections */}
-            {Object.keys(functionalityMap).map((funcKey, idx) => {
-              const funcProducts = functionalityMap[funcKey] || [];
+            {/* Functionality Sections (sorted by newest product) */}
+            {functionalityGroups.map((group, idx) => {
+              const funcKey = group.funcKey;
+              const funcProducts = group.products; // Already sorted descending by date
               const expanded = !!expandedFunctionalities[funcKey];
               return (
                 <View key={`${funcKey}-${idx}`} style={styles.functionalitySection}>
@@ -367,6 +402,10 @@ const Home = () => {
                           <Text style={styles.productItemText}>
                             {product.product_name || 'Unnamed Product'}
                           </Text>
+                          {/* Optionally display date here */}
+                          {/* <Text style={[styles.productItemText, { fontSize: 12 }]}>
+                            {product.date_dadded_js?.toLocaleString() || ''}
+                          </Text> */}
                         </TouchableOpacity>
                       ))}
                     </View>
@@ -401,6 +440,10 @@ const Home = () => {
                   <Text style={styles.modalText}>
                     Footprint: {selectedProduct.footprint || 'N/A'}
                   </Text>
+                  {/* Optionally show date_dadded */}
+                  {/* <Text style={styles.modalText}>
+                    Date Added: {selectedProduct.date_dadded_js?.toLocaleString() || 'N/A'}
+                  </Text> */}
 
                   {/* Display other fields if they exist */}
                   {Object.keys(selectedProduct).map((key) => {
@@ -412,6 +455,8 @@ const Home = () => {
                         'functionality',
                         'footprint',
                         'footprintValue',
+                        'date_dadded',
+                        'date_dadded_js',
                       ].includes(key)
                     ) {
                       return null;
