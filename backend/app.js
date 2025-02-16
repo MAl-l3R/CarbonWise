@@ -122,6 +122,74 @@ app.post('/reduce-carbon-footprint', async (req, res) => {
 });
 
 // -------------------------------------------------
+// Detect Objects route (Google Vision API)
+// -------------------------------------------------
+app.post('/detect-objects', async (req, res) => {
+  try {
+    if (!req.body || !req.body.base64Image) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing base64Image in the request body',
+      });
+    }
+
+    const base64Image = req.body.base64Image;
+    const visionApiKey = process.env.VISION_API_KEY; // from .env
+
+    if (!visionApiKey) {
+      return res.status(500).json({
+        success: false,
+        message: 'Google Vision API Key not found in server .env',
+      });
+    }
+
+    // Prepare request for Vision
+    const requestData = {
+      requests: [
+        {
+          image: { content: base64Image },
+          features: [{ type: 'OBJECT_LOCALIZATION', maxResults: 10 }],
+        },
+      ],
+    };
+
+    const endpoint = `https://vision.googleapis.com/v1/images:annotate?key=${visionApiKey}`;
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestData),
+    });
+    const responseJson = await response.json();
+
+    if (
+      responseJson.responses &&
+      responseJson.responses[0]?.localizedObjectAnnotations?.length > 0
+    ) {
+      const detectedNames = responseJson.responses[0].localizedObjectAnnotations
+        .map((obj) => obj.name)
+        .join(', ');
+
+      return res.status(200).json({
+        success: true,
+        objects: detectedNames,
+      });
+    } else {
+      return res.status(200).json({
+        success: true,
+        objects: 'No objects detected. Try another image.',
+      });
+    }
+  } catch (error) {
+    console.error('Analysis Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'An error occurred while analyzing the image',
+      details: error.message,
+    });
+  }
+});
+
+// -------------------------------------------------
 // Start the server
 // -------------------------------------------------
 app.listen(PORT, () => {
