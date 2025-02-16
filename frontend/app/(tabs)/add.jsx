@@ -21,13 +21,13 @@ const Add = () => {
         <CustomButton
           title="Enter Details Manually"
           handlePress={() => router.push("/manual-entry")}
-          containerStyles={{ marginTop: 20, height: 165, width: "100%" }}
+          containerStyles={{ marginTop: 20, height: 260, width: "100%" }}
           textStyles={{ fontWeight: "bold", fontSize: 24 }}
           backgroundImage={images.document}
           backgroundStartsLeft={true}
         />
 
-        {/* Navigate to Upload Image */}
+        {/* Navigate to Upload Image
         <CustomButton
           title="Upload Product Image"
           handlePress={() => router.push("/upload-image")}
@@ -35,15 +35,21 @@ const Add = () => {
           textStyles={{ fontWeight: "bold", fontSize: 24 }}
           backgroundImage={images.camera}
           backgroundStartsRight={true}
-        />
+        /> */}
         <CustomButton
-          title="Take Product Picture"
-          handlePress={() => router.push("/take-picture")}
-          containerStyles={{ marginTop: 20, height: 165, width: "100%" }}
+          title="Product Picture"
+          handlePress={() => router.push("/picture")}
+          containerStyles={{ marginTop: 20, height: 260, width: "100%" }}
           textStyles={{ fontWeight: "bold", fontSize: 24 }}
           backgroundImage={images.camera}
           backgroundStartsRight={true}
         />
+
+        {/* <Button
+          title="Take Picture"
+          onPress={() => router.push("/take-picture")}
+          style={{ marginTop: 20 }}
+        /> */}
         
       </SafeAreaView>
     </ImageBackground>

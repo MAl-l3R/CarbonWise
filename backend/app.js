@@ -8,7 +8,7 @@ const PORT = 3000;
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // -------------------------------------------------
-// MIDDLEWARE
+// 1) MIDDLEWARE
 // -------------------------------------------------
 app.use(cors());
 
@@ -16,8 +16,11 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// Other config...
+// (If you don't use URL-encoded forms, you can skip the second line)
+
 // -------------------------------------------------
-// Initialize Gemini AI model
+// Initialize Gemini AI model (Optional for your app)
 // -------------------------------------------------
 const apiKey = process.env.API_KEY;
 if (!apiKey) {
@@ -40,7 +43,7 @@ app.get('/', (req, res) => {
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // -------------------------------------------------
-// Calculate carbon footprint route
+// Calculate carbon footprint route (example)
 // -------------------------------------------------
 app.post('/calculate-carbon-footprint', async (req, res) => {
   try {
@@ -89,7 +92,7 @@ app.post('/calculate-carbon-footprint', async (req, res) => {
 });
 
 // -------------------------------------------------
-// Reduce carbon footprint route
+// Reduce carbon footprint route (example)
 // -------------------------------------------------
 app.post('/reduce-carbon-footprint', async (req, res) => {
   try {
