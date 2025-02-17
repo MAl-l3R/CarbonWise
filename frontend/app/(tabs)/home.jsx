@@ -24,8 +24,6 @@ import { Svg, G, Path, Text as SvgText } from 'react-native-svg';
 
 // Expo Router
 import { useRouter } from 'expo-router';
-
-// Icons for expand/collapse & product rows
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Home = () => {
@@ -57,7 +55,9 @@ const Home = () => {
     '#D3D3D3',
   ];
 
-  // 1. Check user & fetch products
+  /* ------------------------------------------------------------------
+   *  1. Check user & fetch products
+   * ------------------------------------------------------------------ */
   useEffect(() => {
     if (!loading && !currentUser) {
       router.replace('/');
@@ -68,11 +68,13 @@ const Home = () => {
     }
   }, [loading, currentUser]);
 
-  // 2. Fetch products from Firestore
+  /* ------------------------------------------------------------------
+   *  2. Fetch products from Firestore
+   * ------------------------------------------------------------------ */
   const fetchProducts = async () => {
     try {
       setProductsLoading(true);
-      chartProgress.setValue(0); // reset chart progress
+      chartProgress.setValue(0); // reset chart
 
       const productsRef = collection(db, 'accounts', currentUser.uid, 'products');
       const snapshot = await getDocs(productsRef);
@@ -132,10 +134,13 @@ const Home = () => {
     }
   };
 
-  // 3. Group products by category
+  /* ------------------------------------------------------------------
+   *  3. Group products by category
+   * ------------------------------------------------------------------ */
   const groupProductsByCategory = (sortedProducts) => {
     const tempMap = {};
 
+    // grouped by category
     for (const prod of sortedProducts) {
       const catKey = prod.category || 'Unknown';
       if (!tempMap[catKey]) {
@@ -144,6 +149,7 @@ const Home = () => {
       tempMap[catKey].push(prod);
     }
 
+    // create array with newest date
     const groupArray = Object.keys(tempMap).map((catKey) => {
       const prods = tempMap[catKey];
       const newestDate = prods[0].date_dadded_js || new Date(0);
@@ -157,7 +163,9 @@ const Home = () => {
 
   const categoryGroups = groupProductsByCategory(products);
 
-  // 4. Data for donut
+  /* ------------------------------------------------------------------
+   *  4. Data for donut
+   * ------------------------------------------------------------------ */
   const dataForPie = categoryGroups.map((group, idx) => {
     const sumValue = group.products.reduce(
       (acc, p) => acc + (p.footprintValue || 0),
@@ -178,7 +186,9 @@ const Home = () => {
 
   const arcs = pieGenerator(dataForPie);
 
-  // 5. Expand/collapse
+  /* ------------------------------------------------------------------
+   *  5. Expand/collapse
+   * ------------------------------------------------------------------ */
   const handleToggleCategory = (catKey) => {
     setExpandedcategories((prev) => ({
       ...prev,
@@ -186,7 +196,9 @@ const Home = () => {
     }));
   };
 
-  // 6. Slice press
+  /* ------------------------------------------------------------------
+   *  6. Slice press
+   * ------------------------------------------------------------------ */
   const handleSlicePress = (index) => {
     if (!dataForPie[index] || totalFootprint === 0) {
       setSelectedSliceIndex(null);
@@ -194,7 +206,7 @@ const Home = () => {
     }
     setSelectedSliceIndex(index);
 
-    // auto-expand that category
+    // expand that group
     const catName = dataForPie[index].name;
     setExpandedcategories((prev) => ({
       ...prev,
@@ -202,7 +214,9 @@ const Home = () => {
     }));
   };
 
-  // 7. Navigate to details
+  /* ------------------------------------------------------------------
+   *  7. Navigate to details
+   * ------------------------------------------------------------------ */
   const handleProductPress = (product) => {
     router.push({
       pathname: '/details',
@@ -218,7 +232,9 @@ const Home = () => {
     });
   };
 
-  // 8. Animate arcs
+  /* ------------------------------------------------------------------
+   *  8. Animate arcs
+   * ------------------------------------------------------------------ */
   useEffect(() => {
     const id = chartProgress.addListener(({ value }) => {
       setChartProgressValue(value);
@@ -228,7 +244,9 @@ const Home = () => {
     };
   }, []);
 
-  // 9. Render
+  /* ------------------------------------------------------------------
+   *  9. Render
+   * ------------------------------------------------------------------ */
   return (
     <ImageBackground source={images.background} style={styles.background}>
       <SafeAreaView style={styles.container}>
@@ -237,7 +255,7 @@ const Home = () => {
         {productsLoading ? (
           <ActivityIndicator size="large" color="#fff" />
         ) : (
-          <ScrollView contentContainerStyle={{ paddingBottom: 50 }}>
+          <ScrollView contentContainerStyle={styles.scrollContent}>
             {/* Donut Chart */}
             {totalFootprint > 0 ? (
               <View style={styles.chartContainer}>
@@ -340,9 +358,9 @@ const Home = () => {
                       {catKey} ({catProducts.length})
                     </Text>
                     <Ionicons
-                      name={expanded ? "chevron-down" : "chevron-forward"}
+                      name={expanded ? 'chevron-down' : 'chevron-forward'}
                       size={20}
-                      color="#fff"
+                      color="#324958" // slightly darker than white for contrast
                     />
                   </TouchableOpacity>
 
@@ -357,8 +375,8 @@ const Home = () => {
                           <Ionicons
                             name="cube-outline"
                             size={18}
-                            color="#fff"
-                            style={styles.productIcon}
+                            color="#324958"
+                            style={{ marginRight: 8 }}
                           />
                           <Text style={styles.productItemText}>
                             {product.product_name || 'Unnamed Product'}
@@ -387,8 +405,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'transparent',
-    alignItems: 'center',
+    // No longer aligning items center so we get full width
+    // and rely on padding to create ~20px horizontal spacing
     paddingHorizontal: 20,
+  },
+  scrollContent: {
+    paddingBottom: 50,
   },
   title: {
     fontSize: 24,
@@ -446,27 +468,25 @@ const styles = StyleSheet.create({
   categorySection: {
     marginVertical: 10,
     borderRadius: 10,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    // optional: small shadow for iOS
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    // Small shadow/elevation
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 3,
-    // optional: small elevation for Android
     elevation: 4,
   },
   catHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 14,
-    paddingVertical: 10,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    paddingVertical: 12,
   },
   catHeaderText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: '#324958', // darker text for readability
   },
   productList: {
     paddingVertical: 8,
@@ -476,13 +496,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 14,
-    backgroundColor: 'rgba(255,255,255,0.07)',
-  },
-  productIcon: {
-    marginRight: 6,
   },
   productItemText: {
-    color: '#fff',
     fontSize: 14,
+    color: '#324958', // consistent with header color
   },
 });
