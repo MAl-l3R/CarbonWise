@@ -10,6 +10,7 @@ const CustomButton = ({
   backgroundImage,
   backgroundStartsLeft,
   backgroundStartsRight,
+  backgroundForGallery
 }) => {
   return (
     <TouchableOpacity
@@ -31,6 +32,8 @@ const CustomButton = ({
               ? styles.backgroundStartsLeft
               : backgroundStartsRight
               ? styles.backgroundStartsRight
+              : backgroundForGallery
+              ? styles.backgroundForGallery
               : null
           ]}
           imageStyle={{ opacity: 0.3, borderRadius: 12 }}
@@ -76,6 +79,11 @@ const styles = StyleSheet.create({
     width: '120%', // Enlarges the image
     left: '-3%',  // Shifts the image to start from the left
     transform: [{ rotate: '10deg' }]
+  },
+  backgroundForGallery: {
+    width: '120%', // Enlarges the image
+    left: '-23%', // Shifts the image to start from the left
+    transform: [{ rotate: '-10deg' }]
   },
   textContainer: {
     position: 'absolute', // Ensures text remains unaffected by the background

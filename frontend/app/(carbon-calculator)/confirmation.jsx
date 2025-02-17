@@ -31,8 +31,8 @@
 
 // // //       // Send API requests
 // // //       const [carbonFootprint, reductionTips] = await Promise.all([
-// // //         axios.post('http://localhost:3000/calculate-carbon-footprint', productDetails),
-// // //         axios.post('http://localhost:3000/reduce-carbon-footprint', productDetails),
+// // //         axios.post('http://10.0.0.191:3000/calculate-carbon-footprint', productDetails),
+// // //         axios.post('http://10.0.0.191:3000/reduce-carbon-footprint', productDetails),
 // // //       ]);
 
 // // //       // Navigate to results page
@@ -193,7 +193,7 @@
 // //   const [form, setForm] = useState({
 // //     product_type: '',
 // //     additional_info: '',
-// //     functionality: '', // Store the selected category
+// //     category: '', // Store the selected category
 // //   });
 // //   const [isSubmitting, setIsSubmitting] = useState(false);
 // //   const [isPickerVisible, setIsPickerVisible] = useState(false); // Controls the Picker modal visibility
@@ -206,8 +206,8 @@
 // //     if (isSubmitting) return; // Prevent multiple submissions
 // //     setIsSubmitting(true);
 
-// //     // 1) Check if "functionality" was selected
-// //     if (!form.functionality) {
+// //     // 1) Check if "category" was selected
+// //     if (!form.category) {
 // //       Alert.alert('Error', 'Please select a category before continuing!');
 // //       setIsSubmitting(false);
 // //       return;
@@ -217,13 +217,13 @@
 // //       const productDetails = {
 // //         product_name: productName,
 // //         additional_info: form.additional_info || null,
-// //         functionality: form.functionality, // We already checked it's not empty
+// //         category: form.category, // We already checked it's not empty
 // //       };
 
 // //       // Send API requests
 // //       const [carbonFootprint, reductionTips] = await Promise.all([
-// //         axios.post('http://localhost:3000/calculate-carbon-footprint', productDetails),
-// //         axios.post('http://localhost:3000/reduce-carbon-footprint', productDetails),
+// //         axios.post('http://10.0.0.191:3000/calculate-carbon-footprint', productDetails),
+// //         axios.post('http://10.0.0.191:3000/reduce-carbon-footprint', productDetails),
 // //       ]);
 
 // //       // Navigate to results page
@@ -249,7 +249,7 @@
 
 // //   // Handle picking a category
 // //   const handlePickerChange = (itemValue) => {
-// //     setForm((prev) => ({ ...prev, functionality: itemValue }));
+// //     setForm((prev) => ({ ...prev, category: itemValue }));
 // //     // If user selected an actual category (non-empty), close the modal
 // //     if (itemValue) {
 // //       setIsPickerVisible(false);
@@ -291,7 +291,7 @@
 // //               style={styles.dropdownTouchable}
 // //             >
 // //               <Text style={styles.dropdownText}>
-// //                 {form.functionality || '-- Choose an option --'}
+// //                 {form.category || '-- Choose an option --'}
 // //               </Text>
 // //               <Ionicons name="chevron-down" size={20} color="#000" />
 // //             </TouchableOpacity>
@@ -308,7 +308,7 @@
 // //               <View style={styles.modalContent}>
 // //                 <Text style={styles.modalTitle}>Select Category</Text>
 // //                 <Picker
-// //                   selectedValue={form.functionality}
+// //                   selectedValue={form.category}
 // //                   onValueChange={handlePickerChange}
 // //                   style={{ width: '100%' }}
 // //                 >
@@ -494,7 +494,7 @@
 //   const [form, setForm] = useState({
 //     product_type: '',
 //     additional_info: '',
-//     functionality: '', // store the selected category
+//     category: '', // store the selected category
 //   });
 //   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -511,8 +511,8 @@
 //     if (isSubmitting) return;
 //     setIsSubmitting(true);
 
-//     // Ensure the user selected a functionality category
-//     if (!form.functionality) {
+//     // Ensure the user selected a category category
+//     if (!form.category) {
 //       Alert.alert('Error', 'Please select a category before continuing!');
 //       setIsSubmitting(false);
 //       return;
@@ -522,13 +522,13 @@
 //       const productDetails = {
 //         product_name: productName,
 //         additional_info: form.additional_info || null,
-//         functionality: form.functionality,
+//         category: form.category,
 //       };
 
 //       // Send API requests
 //       const [carbonFootprint, reductionTips] = await Promise.all([
-//         axios.post('http://10.0.0.234:3000/calculate-carbon-footprint', productDetails),
-//         axios.post('http://10.0.0.234:3000/reduce-carbon-footprint', productDetails),
+//         axios.post('http://10.0.0.191:3000/calculate-carbon-footprint', productDetails),
+//         axios.post('http://10.0.0.191:3000/reduce-carbon-footprint', productDetails),
 //       ]);
 
 //       // Navigate to results page
@@ -591,8 +591,8 @@
 //                 <MenuTrigger>
 //                   <View style={styles.trigger}>
 //                     <Text style={styles.triggerText}>
-//                       {form.functionality
-//                         ? form.functionality
+//                       {form.category
+//                         ? form.category
 //                         : '-- Choose an option --'}
 //                     </Text>
 //                     <Ionicons
@@ -605,10 +605,10 @@
 //                 </MenuTrigger>
 //               }
 //             >
-//               {/* Each MenuOption sets the form.functionality and closes the menu */}
+//               {/* Each MenuOption sets the form.category and closes the menu */}
 //               <MenuOption
 //                 onSelect={() => {
-//                   setForm({ ...form, functionality: 'Transportation' });
+//                   setForm({ ...form, category: 'Transportation' });
 //                   setIsMenuVisible(false);
 //                 }}
 //               >
@@ -616,7 +616,7 @@
 //               </MenuOption>
 //               <MenuOption
 //                 onSelect={() => {
-//                   setForm({ ...form, functionality: 'Energy Usage' });
+//                   setForm({ ...form, category: 'Energy Usage' });
 //                   setIsMenuVisible(false);
 //                 }}
 //               >
@@ -624,7 +624,7 @@
 //               </MenuOption>
 //               <MenuOption
 //                 onSelect={() => {
-//                   setForm({ ...form, functionality: 'Food Consumption' });
+//                   setForm({ ...form, category: 'Food Consumption' });
 //                   setIsMenuVisible(false);
 //                 }}
 //               >
@@ -634,7 +634,7 @@
 //                 onSelect={() => {
 //                   setForm({
 //                     ...form,
-//                     functionality: 'Consumer Goods & Shopping',
+//                     category: 'Consumer Goods & Shopping',
 //                   });
 //                   setIsMenuVisible(false);
 //                 }}
@@ -645,7 +645,7 @@
 //                 onSelect={() => {
 //                   setForm({
 //                     ...form,
-//                     functionality: 'Waste Management & Recycling',
+//                     category: 'Waste Management & Recycling',
 //                   });
 //                   setIsMenuVisible(false);
 //                 }}
@@ -801,7 +801,7 @@ const Confirmation = () => {
   const [form, setForm] = useState({
     product_type: '',
     additional_info: '',
-    functionality: '', // store the selected category
+    category: '', // store the selected category
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -820,8 +820,8 @@ const Confirmation = () => {
     if (isSubmitting) return; // Prevent multiple submissions
     setIsSubmitting(true);
 
-    // Ensure the user selected a functionality category
-    if (!form.functionality) {
+    // Ensure the user selected a category category
+    if (!form.category) {
       Alert.alert('Error', 'Please select a category before continuing!');
       setIsSubmitting(false);
       return;
@@ -831,13 +831,13 @@ const Confirmation = () => {
       const productDetails = {
         product_name: productName,
         additional_info: form.additional_info || null,
-        functionality: form.functionality,
+        category: form.category,
       };
 
       // Example API calls
       const [carbonFootprint, reductionTips] = await Promise.all([
-        axios.post('http://10.0.0.234:3000/calculate-carbon-footprint', productDetails),
-        axios.post('http://10.0.0.234:3000/reduce-carbon-footprint', productDetails),
+        axios.post('http://10.0.0.191:3000/calculate-carbon-footprint', productDetails),
+        axios.post('http://10.0.0.191:3000/reduce-carbon-footprint', productDetails),
       ]);
 
       // Navigate to results page
@@ -906,7 +906,7 @@ const Confirmation = () => {
                 <MenuTrigger>
                   <View style={styles.dropdownTouchable}>
                     <Text style={styles.dropdownText}>
-                      {form.functionality || '-- Choose an option --'}
+                      {form.category || '-- Choose an option --'}
                     </Text>
                     <Ionicons name="chevron-down" size={20} color="#000" />
                   </View>
@@ -915,7 +915,7 @@ const Confirmation = () => {
             >
               <MenuOption
                 onSelect={() => {
-                  setForm({ ...form, functionality: 'Transportation' });
+                  setForm({ ...form, category: 'Transportation' });
                   setIsMenuVisible(false);
                 }}
               >
@@ -923,7 +923,7 @@ const Confirmation = () => {
               </MenuOption>
               <MenuOption
                 onSelect={() => {
-                  setForm({ ...form, functionality: 'Energy Usage' });
+                  setForm({ ...form, category: 'Energy Usage' });
                   setIsMenuVisible(false);
                 }}
               >
@@ -931,7 +931,7 @@ const Confirmation = () => {
               </MenuOption>
               <MenuOption
                 onSelect={() => {
-                  setForm({ ...form, functionality: 'Food Consumption' });
+                  setForm({ ...form, category: 'Food Consumption' });
                   setIsMenuVisible(false);
                 }}
               >
@@ -939,7 +939,7 @@ const Confirmation = () => {
               </MenuOption>
               <MenuOption
                 onSelect={() => {
-                  setForm({ ...form, functionality: 'Consumer Goods & Shopping' });
+                  setForm({ ...form, category: 'Consumer Goods & Shopping' });
                   setIsMenuVisible(false);
                 }}
               >
@@ -947,7 +947,7 @@ const Confirmation = () => {
               </MenuOption>
               <MenuOption
                 onSelect={() => {
-                  setForm({ ...form, functionality: 'Waste Management & Recycling' });
+                  setForm({ ...form, category: 'Waste Management & Recycling' });
                   setIsMenuVisible(false);
                 }}
               >
