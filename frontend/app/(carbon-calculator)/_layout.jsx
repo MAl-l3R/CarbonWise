@@ -31,6 +31,10 @@ const CarbonCalculatorLayout = () => {
           name="picture"
           options={{headerShown: false}}
         />
+        <Stack.Screen
+          name="details"
+          options={{headerShown: false}}
+        />
       </Stack>
       <StatusBar backgroundColor='transparent' style='light' />
     </>
