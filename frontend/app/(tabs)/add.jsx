@@ -17,7 +17,6 @@ const Add = () => {
           How would you like to add your item? Fill out the checklist for detailed results or upload a photo for a quick estimate.
         </Text>
 
-        {/* Navigate to ManualEntryForm */}
         <CustomButton
           title="Enter Details Manually"
           handlePress={() => router.push("/manual-entry")}
@@ -27,30 +26,14 @@ const Add = () => {
           backgroundStartsLeft={true}
         />
 
-        {/* Navigate to Upload Image
         <CustomButton
           title="Upload Product Image"
-          handlePress={() => router.push("/upload-image")}
-          containerStyles={{ marginTop: 20, height: 165, width: "100%" }}
-          textStyles={{ fontWeight: "bold", fontSize: 24 }}
-          backgroundImage={images.camera}
-          backgroundStartsRight={true}
-        /> */}
-        <CustomButton
-          title="Product Picture"
           handlePress={() => router.push("/picture")}
           containerStyles={{ marginTop: 20, height: 260, width: "100%" }}
           textStyles={{ fontWeight: "bold", fontSize: 24 }}
           backgroundImage={images.camera}
           backgroundStartsRight={true}
         />
-
-        {/* <Button
-          title="Take Picture"
-          onPress={() => router.push("/take-picture")}
-          style={{ marginTop: 20 }}
-        /> */}
-        
       </SafeAreaView>
     </ImageBackground>
   );
