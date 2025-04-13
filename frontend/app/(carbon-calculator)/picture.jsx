@@ -155,7 +155,7 @@ export default function MergedTakeOrUploadPicture() {
         </View>
 
         <Text style={styles.subtitle}>
-          How would you like to upload a photo?
+          Please upload a photo.
         </Text>
 
         {/* Show the chosen/taken image */}
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 17,
     fontWeight: 600,
-    paddingTop: 6,
+    paddingTop: 19,
     paddingHorizontal: 20,
     color: "#fff", // White text for better visibility
   },

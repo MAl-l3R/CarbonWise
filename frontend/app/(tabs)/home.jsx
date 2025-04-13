@@ -250,12 +250,11 @@ const Home = () => {
   return (
     <ImageBackground source={images.background} style={styles.background}>
       <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Home</Text>
-
         {productsLoading ? (
           <ActivityIndicator size="large" color="#fff" />
         ) : (
           <ScrollView contentContainerStyle={styles.scrollContent}>
+            <Text style={styles.title}>Home</Text>
             {/* Donut Chart */}
             {totalFootprint > 0 ? (
               <View style={styles.chartContainer}>
@@ -408,6 +407,7 @@ const styles = StyleSheet.create({
     // No longer aligning items center so we get full width
     // and rely on padding to create ~20px horizontal spacing
     paddingHorizontal: 20,
+    paddingBottom: 40
   },
   scrollContent: {
     paddingBottom: 50,
